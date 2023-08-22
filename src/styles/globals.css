@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply h-screen w-screen;
+  }
+
+  body,
+  #__next {
+    @apply h-full w-full;
+  }
+
+  h1,
+  .h1 {
+    @apply text-3xl lg:text-4xl;
+  }
+
+  h2,
+  .h2 {
+    @apply text-2xl lg:text-3xl;
+  }
+
+  h3,
+  .h3 {
+    @apply text-xl lg:text-2xl;
+  }
+
+  h4,
+  .h4 {
+    @apply text-lg lg:text-xl;
+  }
+
+  h5,
+  .h5 {
+    @apply text-base font-bold lg:text-lg lg:font-normal;
+  }
+}
+
+@layer components {
+  .row {
+    @apply flex items-center;
+  }
+
+  .col {
+    @apply row flex-col;
+  }
+
+  .btn {
+    @apply rounded-full border-none bg-base-300/90 py-3 font-semibold text-white no-underline transition hover:bg-base-200/80;
+  }
+
+  .btn-card {
+    @apply bordered min-h-16 grid w-full grid-cols-3 items-center rounded-2xl border transition hover:bg-base-content/50 hover:text-white hover:shadow-md;
+  }
+
+  .btn.success, .btn-card.success {
+    @apply border-success hover:bg-success/50;
+  }
+  
+  label {
+    @apply label col items-start w-full;
+  }
+
+  input {
+    @apply input input-bordered mt-2;
+  }
+
+  select {
+    @apply select select-bordered mt-2;
+  }
+
+  .required {
+    @apply after:text-red-500;
+  }
+
+  .full {
+    @apply h-full w-full;
+  }
+
+  .centered {
+    @apply justify-center items-center;
+  }
+}
+
+.required:after {
+  content:" *";
+}
