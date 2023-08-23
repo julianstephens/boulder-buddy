@@ -1,4 +1,4 @@
-import type { MesoModalState, MesoModalStatus } from "@/types/stores";
+import type { MesoModalState, MesoModalStatus, MesoMode } from "@/types/store";
 import { Mesocycle } from "@prisma/client";
 import { StateCreator } from "zustand";
 
@@ -13,4 +13,6 @@ export const createMesoModalSlice: StateCreator<
   mesoModalState: "hide",
   updateMesoModalState: (m: MesoModalStatus) =>
     set(() => ({ mesoModalState: m })),
+  mesoMode: "create",
+  updateMesoMode: (m: MesoMode) => set(() => ({ mesoMode: m })),
 });

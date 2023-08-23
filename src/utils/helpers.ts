@@ -5,7 +5,7 @@ export const isEmpty = (obj: unknown) => {
 
   if (typeof obj === "string") return obj === "";
 
-  if (Array.isArray(obj)) return obj && obj.length === 0;
+  if (Array.isArray(obj)) return obj.length === 0;
 
   return Object.keys(obj).length === 0;
 };

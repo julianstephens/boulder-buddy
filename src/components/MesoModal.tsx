@@ -15,12 +15,18 @@ import { useMeso } from "@/hooks/useMeso";
 type Mode = "create" | "update";
 
 export const MesoModal = () => {
-  const { meso, mesoState, update, updateMesoState } = useMeso();
+  const {
+    meso,
+    mesoState,
+    mode: formMode,
+    update,
+    updateMesoState,
+    updateMesoMode,
+  } = useMeso();
 
   const { data: session } = useSession();
 
   const [startDate, setStartDate] = useState<Date | null>(null);
-  const [formMode, setMode] = useState<Mode>("create");
 
   const { register, handleSubmit, getValues, setValue, reset } = useForm<
     Prisma.MesocycleCreateInput | Prisma.MesocycleUpdateInput
@@ -43,8 +49,8 @@ export const MesoModal = () => {
     },
   });
 
-  const createMutation = api.cycle.createMeso.useMutation();
-  const updateMutation = api.cycle.updateMeso.useMutation();
+  const createMutation = api.meso.createMeso.useMutation();
+  const updateMutation = api.meso.updateMeso.useMutation();
 
   const handleDates = (dates: any) => {
     const { startDate: start } = dates;
@@ -102,6 +108,8 @@ export const MesoModal = () => {
   const closeModal = () => {
     (window as any).mesoModal.close();
     updateMesoState("hide");
+    updateMesoMode("create");
+    update({} as Mesocycle);
     reset();
     setStartDate(null);
   };
@@ -113,7 +121,7 @@ export const MesoModal = () => {
       setValue("isActive", meso.isActive);
       setValue("schema", meso.schema);
       setStartDate(fromTimestamp(meso.startDate));
-      setMode("update");
+      updateMesoMode("update");
     }
   }, [meso, mesoState]);
 

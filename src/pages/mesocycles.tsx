@@ -5,12 +5,20 @@ import { api } from "@/utils/api";
 import { formatTimestamp, isEmpty } from "@/utils/helpers";
 import { Mesocycle } from "@prisma/client";
 import { useEffect, useState } from "react";
+import { useMetadata } from "@/hooks/useMetadata";
 
 const MesocyclePage = () => {
   const { update, updateMesoState } = useMeso();
   const [activeCycle, setActiveCycle] = useState<Mesocycle | null>(null);
   const [cycles, setCyles] = useState<Mesocycle[] | null>(null);
-  const { data, isLoading } = api.cycle.getMesos.useQuery({});
+  const { data, isLoading } = api.meso.getMesos.useQuery({});
+  const {
+    updatePageTitle,
+    updateActionButton,
+    updateShowActionButton,
+    updateActionHandler,
+    initialize,
+  } = useMetadata();
 
   const openModal = (m: Mesocycle) => {
     update(m);
@@ -20,21 +28,28 @@ const MesocyclePage = () => {
 
   useEffect(() => {
     if (data) {
-      const active = data.cycles.find((c: Mesocycle) => c.isActive);
+      const active = data.find((c: Mesocycle) => c.isActive);
       if (active) setActiveCycle(active);
       setCyles(
-        active
-          ? data.cycles.filter((c: Mesocycle) => c.id !== active.id)
-          : data.cycles,
+        active ? data.filter((c: Mesocycle) => c.id !== active.id) : data,
       );
     }
   }, [data]);
 
+  useEffect(() => {
+    initialize("Mesocycles", true, "Create new mesocycle", (e) => {
+      (window as any).mesoModal.showModal();
+    });
+  }, []);
+
   return (
     <>
-      <h3 className="mb-16">Mesocyles</h3>
       {isLoading ? (
         <Loader fullPage={true} />
+      ) : isEmpty(data) ? (
+        <div className="row full centered">
+          <h5>No mesocycle(s) to display</h5>
+        </div>
       ) : (
         <>
           {activeCycle && (
