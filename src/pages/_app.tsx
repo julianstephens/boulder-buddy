@@ -1,10 +1,10 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
-import "react-datepicker/dist/react-datepicker.css";
 import "@/styles/globals.css";
 import { api } from "@/utils/api";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
+import "react-datepicker/dist/react-datepicker.css";
 import { Toaster } from "react-hot-toast";
 
 const BoulderBuddy: AppType<{ session: Session | null }> = ({

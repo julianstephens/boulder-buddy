@@ -12,6 +12,12 @@ const MesocyclePage = () => {
   const [cycles, setCyles] = useState<Mesocycle[] | null>(null);
   const { data, isLoading } = api.cycle.getMesos.useQuery({});
 
+  const openModal = (m: Mesocycle) => {
+    update(m);
+    updateMesoState("show");
+    (window as any).mesoModal.showModal();
+  };
+
   useEffect(() => {
     if (data) {
       const active = data.cycles.find((c: Mesocycle) => c.isActive);
@@ -23,12 +29,6 @@ const MesocyclePage = () => {
       );
     }
   }, [data]);
-
-  const openModal = (m: Mesocycle) => {
-    update(m);
-    updateMesoState("show");
-    (window as any).mesoModal.showModal();
-  };
 
   return (
     <>

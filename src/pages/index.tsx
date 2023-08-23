@@ -1,19 +1,8 @@
 import { AuthButton } from "@/components/AuthButton";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 export default function Home() {
-  const router = useRouter();
-  const { status } = useSession();
-
-  useEffect(() => {
-    if (status === "authenticated") {
-      void router.push("/dashboard");
-    }
-  }, [status]);
-
   return (
     <>
       <Head>
