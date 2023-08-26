@@ -3,20 +3,22 @@ import { WithId, withIdSchema } from "@/server/schemas";
 import {
   MesocycleCreateInputSchema,
   MesocycleUpdateInputSchema,
-  MesocycleWhereInputSchema,
   MesocycleWhereUniqueInputSchema,
+  MesocycleFindManyArgsSchema,
+  MesocycleWithRelations,
 } from "prisma/generated/zod";
 
 export const mesoRouter = createTRPCRouter({
   getMesos: protectedProcedure
-    .input(MesocycleWhereInputSchema)
+    .input(MesocycleFindManyArgsSchema)
     .query(async ({ input, ctx: { session, prisma } }) => {
-      return await prisma.mesocycle.findMany({
+      return (await prisma.mesocycle.findMany({
+        ...input,
         where: {
-          ...input,
+          ...input.where,
           userId: session.user.id,
         },
-      });
+      })) as unknown as MesocycleWithRelations[];
     }),
   getMeso: protectedProcedure
     .input(MesocycleWhereUniqueInputSchema)

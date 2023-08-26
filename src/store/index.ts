@@ -1,13 +1,15 @@
 import { create } from "zustand";
-import { createMesoModalSlice } from "./mesoModal";
-import { MesoModalState } from "@/types/store";
-import { set } from "react-hook-form";
-import { createMetadataSlice } from "./appMetadata";
-import { AppMetadataState } from "../types/store";
+import { createMesoSlice } from "./meso";
 
-export const useBoundStore = create<AppMetadataState & MesoModalState>()(
-  (...a) => ({
-    ...createMetadataSlice(...a),
-    ...createMesoModalSlice(...a),
-  }),
-);
+import type {
+  MesoState,
+  AppMetadataState,
+} from "@/types/store";
+import { createMetadataSlice } from "./appMetadata";
+
+export const useBoundStore = create<
+  AppMetadataState & MesoState
+>()((...a) => ({
+  ...createMetadataSlice(...a),
+  ...createMesoSlice(...a),
+}));

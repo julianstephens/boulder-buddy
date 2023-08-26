@@ -6,14 +6,14 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // uses connection pooling
 }
 
 generator zod {
-  provider         = "zod-prisma-types"
-  useMultipleFiles = true
+  provider                  = "zod-prisma-types"
+  useMultipleFiles          = true
+  createRelationValuesTypes = true
 }
 
 // Necessary for Next auth
@@ -68,8 +68,8 @@ model Mesocycle {
   description String?
   startDate   Int
   endDate     Int
+  numMicros   Int          @default(4)
   userId      String
-  schema      CycleSchema
   isActive    Boolean
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   microcycles Microcycle[]
@@ -78,6 +78,9 @@ model Mesocycle {
 model Microcycle {
   id           String        @id @default(cuid())
   goal         String
+  startDate    Int
+  endDate      Int
+  schema       CycleSchema
   description  String?
   mesoId       String
   mesocycle    Mesocycle     @relation(fields: [mesoId], references: [id], onDelete: Cascade)
@@ -86,80 +89,85 @@ model Microcycle {
 
 model TrainingDay {
   id              String         @id @default(cuid())
-  date            Int
+  date            Int            @unique
+  routines        Routine[]
+  microcycle      Microcycle     @relation(fields: [microcycleId], references: [id])
+  microcycleId    String
   recoveryLevel   RecoveryLevel? @relation(fields: [recoveryLevelId], references: [id])
-  routine         Routine        @relation(fields: [routineId], references: [id])
+  recoveryLevelId String?
+  workoutLog      ExerciseLog[]
   note            Note?          @relation(fields: [noteId], references: [id])
   noteId          String?
-  microcycle      Microcycle?    @relation(fields: [microcycleId], references: [id])
-  microcycleId    String?
-  recoveryLevelId String?
-  routineId       String
 }
 
 model Routine {
-  id           String        @id @default(cuid())
-  name         String
-  duration     Int?
-  note         Note?         @relation(fields: [noteId], references: [id])
-  noteId       String?
-  activities   Activity[]
-  trainingDays TrainingDay[]
+  id               String          @id @default(cuid())
+  name             String          @unique
+  duration         Int?
+  type             RoutineType
+  sortOrder        String
+  exercises        Exercise[]
+  trainingDays     TrainingDay[]
+  routineSubtype   RoutineSubtype? @relation(fields: [routineSubtypeId], references: [id])
+  routineSubtypeId String?
+  note             Note?           @relation(fields: [noteId], references: [id])
+  noteId           String?
 }
 
-model Activity {
-  id                 String          @id @default(cuid())
-  type               ActivityType
-  exercises          Exercise[]
-  climbLog           Climb[]
-  subtype            ActivitySubtype @relation(fields: [acitivitySubtypeId], references: [id])
-  acitivitySubtypeId String
-  routines           Routine[]
-}
-
-model ActivitySubtype {
-  id       String     @id @default(cuid())
-  type     String
-  activity Activity[]
+model RoutineSubtype {
+  id      String    @id @default(cuid())
+  type    String
+  routine Routine[]
 }
 
 model Exercise {
-  id         String       @id @default(cuid())
-  name       String
-  type       ExerciseType
-  equipment  Equipment
-  sets       Int
-  reps       Int?
-  weight     Int?
-  duration   Int?
-  imageId    Int?
-  note       Note?        @relation(fields: [noteId], references: [id])
-  noteId     String?
-  activity   Activity?    @relation(fields: [activityId], references: [id])
-  activityId String?
+  id        String        @id @default(cuid())
+  name      String        @unique
+  type      ExerciseType
+  equipment Equipment
+  imageId   Int?
+  note      Note?         @relation(fields: [noteId], references: [id])
+  noteId    String?
+  history   ExerciseLog[]
+  routines  Routine[]
 }
 
-model Climb {
-  id         String    @id @default(cuid())
-  name       String?
-  grade      Int
-  project    Boolean?
-  attempts   Int?
-  flashed    Boolean?
-  location   Location? @relation(fields: [locationId], references: [id])
-  note       Note?     @relation(fields: [noteId], references: [id])
-  noteId     String?
-  activity   Activity? @relation(fields: [activityId], references: [id])
-  activityId String?
-  locationId String?
+model ExerciseLog {
+  id            String       @id @default(cuid())
+  exerciseId    String
+  exercise      Exercise     @relation(fields: [exerciseId], references: [id])
+  sets          Int?
+  reps          Int?
+  weight        Int?
+  duration      Int?
+  climbLog      ClimbLog[]
+  note          Note?        @relation(fields: [noteId], references: [id])
+  noteId        String?
+  TrainingDay   TrainingDay? @relation(fields: [trainingDayId], references: [id])
+  trainingDayId String?
+}
+
+model ClimbLog {
+  id           String       @id @default(cuid())
+  name         String?
+  grade        Int
+  project      Boolean?
+  attempts     Int?
+  flashed      Boolean?
+  location     Location?    @relation(fields: [locationId], references: [id])
+  locationId   String?
+  note         Note?        @relation(fields: [noteId], references: [id])
+  noteId       String?
+  WorkoutLog   ExerciseLog? @relation(fields: [workoutLogId], references: [id])
+  workoutLogId String?
 }
 
 model Location {
-  id      String  @id @default(cuid())
+  id      String     @id @default(cuid())
   name    String
   address String?
-  note    Note?   @relation(fields: [noteId], references: [id])
-  climbs  Climb[]
+  note    Note?      @relation(fields: [noteId], references: [id])
+  climbs  ClimbLog[]
   noteId  String?
 }
 
@@ -174,9 +182,10 @@ model Note {
   text         String
   trainingDays TrainingDay[]
   exercises    Exercise[]
-  climbs       Climb[]
+  climbs       ClimbLog[]
   locations    Location[]
   routines     Routine[]
+  WorkoutLog   ExerciseLog[]
 }
 
 enum CycleType {
@@ -190,19 +199,24 @@ enum CycleSchema {
   DUP
 }
 
-enum ActivityType {
+enum RoutineType {
   CLIMBING
   STRENGTH
   CONDITIONING
+  WARMUP
+  COOLDOWN
   ACTIVE_RECOVERY
   REST
 }
 
 enum ExerciseType {
   WEIGHTED_REPS
-  BW_REPS
+  BODYWEIGHT
   WEIGHTED_BW
   DURATION
+  WARMUP
+  CLIMBING_DRILL
+  CLIMBING_SESSION
 }
 
 enum Equipment {
@@ -212,4 +226,5 @@ enum Equipment {
   KETTLEBELL
   PLATE
   TRX
+  OTHER
 }

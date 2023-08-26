@@ -1,52 +1,52 @@
 import { withIdSchema, WithId } from "@/server/schemas";
 import {
-  ClimbWhereInputSchema,
-  ClimbWhereUniqueInputSchema,
-  ClimbCreateInputSchema,
-  ClimbUpdateInputSchema,
+  ClimbLogWhereInputSchema,
+  ClimbLogWhereUniqueInputSchema,
+  ClimbLogCreateInputSchema,
+  ClimbLogUpdateInputSchema,
 } from "prisma/generated/zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-export const climbRouter = createTRPCRouter({
-  getClimbs: protectedProcedure
-    .input(ClimbWhereInputSchema)
+export const climbLogRouter = createTRPCRouter({
+  getClimbLogs: protectedProcedure
+    .input(ClimbLogWhereInputSchema)
     .query(async ({ input, ctx: { prisma } }) => {
-      return await prisma.climb.findMany({
+      return await prisma.climbLog.findMany({
         where: {
           ...input,
         },
       });
     }),
-  getClimb: protectedProcedure
-    .input(ClimbWhereUniqueInputSchema)
+  getClimbLog: protectedProcedure
+    .input(ClimbLogWhereUniqueInputSchema)
     .query(async ({ input, ctx: { prisma } }) => {
-      return await prisma.climb.findUnique({
+      return await prisma.climbLog.findUnique({
         where: {
           ...input,
         },
       });
     }),
-  createClimb: protectedProcedure
-    .input(ClimbCreateInputSchema)
+  createClimbLog: protectedProcedure
+    .input(ClimbLogCreateInputSchema)
     .mutation(async ({ input, ctx: { prisma } }) => {
-      return await prisma.climb.create({
+      return await prisma.climbLog.create({
         data: input,
       });
     }),
-  updateClimb: protectedProcedure
-    .input(withIdSchema(ClimbUpdateInputSchema))
+  updateClimbLog: protectedProcedure
+    .input(withIdSchema(ClimbLogUpdateInputSchema))
     .mutation(async ({ input, ctx: { prisma } }) => {
-      return await prisma.climb.update({
+      return await prisma.climbLog.update({
         data: input.data,
         where: {
           id: input.id,
         },
       });
     }),
-  deleteClimb: protectedProcedure
+  deleteClimbLog: protectedProcedure
     .input(WithId)
     .mutation(async ({ input, ctx: { prisma } }) => {
-      return await prisma.climb.delete({
+      return await prisma.climbLog.delete({
         where: {
           id: input.id,
         },

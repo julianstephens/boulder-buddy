@@ -1,9 +1,9 @@
-import { withIdSchema, WithId } from "@/server/schemas";
+import { WithId, withIdSchema } from "@/server/schemas";
 import {
-  RoutineWhereInputSchema,
-  RoutineWhereUniqueInputSchema,
-  RoutineCreateInputSchema,
-  RoutineUpdateInputSchema,
+    RoutineCreateInputSchema,
+    RoutineUpdateInputSchema,
+    RoutineWhereInputSchema,
+    RoutineWhereUniqueInputSchema,
 } from "prisma/generated/zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 

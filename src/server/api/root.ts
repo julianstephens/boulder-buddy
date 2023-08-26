@@ -1,14 +1,12 @@
 import { mesoRouter } from "@/server/api/routers/meso";
-import { createTRPCRouter } from "@/server/api/trpc";
 import { microRouter } from "@/server/api/routers/micro";
 import { trainingDayRouter } from "@/server/api/routers/trainingDay";
-import { routineRouter } from "./routers/routine";
-import { activityRouter } from "./routers/activity";
+import { createTRPCRouter } from "@/server/api/trpc";
+import { climbLogRouter } from "./routers/climbLog";
 import { exerciseRouter } from "./routers/exercise";
 import { locationRouter } from "./routers/location";
-import { climbRouter } from "./routers/climb";
-import { subtypeRouter } from "./routers/activitySubtype";
 import { noteRouter } from "./routers/note";
+import { routineRouter } from "./routers/routine";
 
 /**
  * This is the primary router for your server.
@@ -20,10 +18,8 @@ export const appRouter = createTRPCRouter({
   micro: microRouter,
   trainingDay: trainingDayRouter,
   routine: routineRouter,
-  activity: activityRouter,
-  activitySubtype: subtypeRouter,
   exercise: exerciseRouter,
-  climb: climbRouter,
+  climbLog: climbLogRouter,
   location: locationRouter,
   note: noteRouter,
 });

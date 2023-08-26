@@ -1,5 +1,5 @@
 import { useBoundStore } from "@/store";
-import { ButtonHandler } from "@/types";
+import { EventHandler } from "@/types";
 
 export const useMetadata = () => {
   const pageTitle = useBoundStore((state) => state.pageTitle);
@@ -24,7 +24,7 @@ export const useMetadata = () => {
   const updateShowButton = (s: boolean) => {
     updateShowActionButton(s);
   };
-  const updateHandler = (h: ButtonHandler) => {
+  const updateHandler = (h: EventHandler) => {
     updateActionHandler(h);
   };
 
@@ -32,7 +32,7 @@ export const useMetadata = () => {
     title: string,
     showButton: boolean,
     button?: string,
-    handler?: ButtonHandler,
+    handler?: EventHandler,
   ) => {
     updateTitle(title);
     updateShowButton(showButton);

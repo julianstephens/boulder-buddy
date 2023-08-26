@@ -8,4 +8,6 @@ export type ChildrenProps = {
 
 export type AppError = TRPCClientError<AppRouter>;
 
-export type ButtonHandler = (e: React.SyntheticEvent) => void;
+export type EventHandler = (e: React.SyntheticEvent) => void;
+
+export type ErrorHandler = (err: unknown) => void;

@@ -1,16 +1,14 @@
 import { Mesocycle } from "@prisma/client";
-import type { ButtonHandler } from ".";
+import type { EventHandler } from ".";
 
-export type MesoModalStatus = "show" | "hide";
-export type MesoMode = "create" | "update";
+export type MesoStatus = "show" | "hide";
+export type EditMode = "create" | "update";
 
-export type MesoModalState = {
+export type MesoState = {
   meso: Mesocycle;
   updateMeso: (m: Mesocycle) => void;
-  mesoModalState: MesoModalStatus;
-  updateMesoModalState: (m: MesoModalStatus) => void;
-  mesoMode: MesoMode;
-  updateMesoMode: (m: MesoMode) => void;
+  mesoMode: EditMode;
+  updateMesoMode: (m: EditMode) => void;
 };
 
 export type AppMetadataState = {
@@ -18,8 +16,8 @@ export type AppMetadataState = {
   updatePageTitle: (t: string) => void;
   actionButton: string;
   updateActionButton: (b: string) => void;
-  actionHandler: ButtonHandler;
-  updateActionHandler: (h: ButtonHandler) => void;
+  actionHandler: EventHandler;
+  updateActionHandler: (h: EventHandler) => void;
   showActionButton: boolean;
   updateShowActionButton: (s: boolean) => void;
 };

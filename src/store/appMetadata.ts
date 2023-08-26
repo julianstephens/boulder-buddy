@@ -1,4 +1,4 @@
-import type { ButtonHandler } from "@/types";
+import type { EventHandler } from "@/types";
 import type { AppMetadataState } from "@/types/store";
 import React from "react";
 import { StateCreator } from "zustand";
@@ -18,5 +18,5 @@ export const createMetadataSlice: StateCreator<
   actionHandler: (e) => {
     console.log("Clicked action button");
   },
-  updateActionHandler: (h: ButtonHandler) => set(() => ({ actionHandler: h })),
+  updateActionHandler: (h: EventHandler) => set(() => ({ actionHandler: h })),
 });
