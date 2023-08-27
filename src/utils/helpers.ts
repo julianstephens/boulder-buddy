@@ -12,8 +12,8 @@ export const isEmpty = (obj: unknown) => {
   return Object.keys(obj).length === 0;
 };
 
-export const formatTimestamp = (ts: number) =>
-  dayjs.unix(ts).format("DD.MM.YYYY");
+export const formatTimestamp = (ts: number, format = "DD.MM.YYYY") =>
+  dayjs.unix(ts).format(format);
 
 export const fromTimestamp = (ts: number) => dayjs.unix(ts).toDate();
 
@@ -33,3 +33,14 @@ export const isInRange = (
   dayjs
     .unix(target)
     .isBetween(dayjs.unix(rangeStart), dayjs.unix(rangeEnd), "D", "[)");
+
+export const groupBy = <T>(
+  array: T[],
+  predicate: (value: T, index: number, array: T[]) => string,
+) =>
+  array.reduce((acc, value, index, array) => {
+    (acc[predicate(value, index, array)] ||= []).push(value);
+    return acc;
+  }, {} as { [key: string]: T[] });
+
+export const sortBy = <T>(itemsArray: string[], sortingArr: string[]) => itemsArray.sort((a, b) => sortingArr.indexOf(a) - sortingArr.indexOf(b));

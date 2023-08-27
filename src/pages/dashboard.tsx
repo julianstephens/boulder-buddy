@@ -1,19 +1,16 @@
+import { Calendar } from "@/components/Calendar";
 import { Loader } from "@/components/Loader";
 import { useMetadata } from "@/hooks/useMetadata";
 import { api } from "@/utils/api";
 import { isEmpty, isInRange } from "@/utils/helpers";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { Microcycle } from "@prisma/client";
+import dayjs from "dayjs";
 import {
   MesocycleWithRelations,
   MicrocycleWithRelations,
 } from "prisma/generated/zod";
-import dayjs from "dayjs";
-import { Calendar } from "@/components/Calendar";
+import { useEffect, useState } from "react";
 
 const DashboardPage = () => {
-  const { data: session } = useSession();
   const { data, isLoading } = api.meso.getMesos.useQuery({
     where: { isActive: true },
     include: {
@@ -71,7 +68,7 @@ const DashboardPage = () => {
                   </div>
                 </div>
               ))}
-              <div className="col full items-start pt-20">
+              <div className="col full items-start pt-16 sm:pt-20">
                 <div className="col w-full items-center">
                   <h3 className="mx-auto font-bold text-white">Calendar</h3>
                   <h5 className="mt-2">

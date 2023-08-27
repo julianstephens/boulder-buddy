@@ -3,13 +3,24 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    @apply h-screen w-screen overflow-hidden;
+  /* html, body {
+    @apply min-h-full;
   }
 
-  body,
+  html {
+    @apply overflow-hidden;
+  } */
+
+  /* body {
+    @apply ;
+  } */
+
+  html, body {
+    @apply min-h-screen w-screen m-0;
+  }
+
   #__next {
-    @apply h-full w-full overflow-clip;
+    @apply flex flex-col grow-0 absolute h-full w-full;
   }
 
   h1,

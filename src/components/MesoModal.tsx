@@ -146,7 +146,7 @@
 //             <FiX size={20} />
 //           </button>
 //         </div>
-//         <div className="col h-full w-full gap-5">
+//         <div className="col full gap-5">
 //           <div className="row w-full">
 //             <div className="col w-full">
 //               <label htmlFor="desc">

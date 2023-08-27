@@ -11,3 +11,7 @@ export type AppError = TRPCClientError<AppRouter>;
 export type EventHandler = (e: React.SyntheticEvent) => void;
 
 export type ErrorHandler = (err: unknown) => void;
+
+export type Grouped<T> = {
+  [k: string]: T[];
+};

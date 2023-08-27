@@ -31,7 +31,7 @@ export const DashboardLayout = ({ children }: ChildrenProps) => {
   if (loading) return <Loader fullPage={true} />;
 
   return (
-    <div className="row h-full w-full">
+    <div className="row full">
       <div className="col hidden h-full w-2/12 justify-between border-r-2 border-r-neutral px-6 py-5 sm:flex">
         <div className="col">
           <Link
@@ -46,7 +46,7 @@ export const DashboardLayout = ({ children }: ChildrenProps) => {
           className={`${isAuthed() ? "block" : "hidden"} xl:px-24z px-24`}
         />
       </div>
-      <div className="col h-full w-full px-5 pt-10 sm:w-10/12">
+      <div className="col full px-5 pt-10 sm:w-10/12">
         <div className="row w-full justify-between">
           <div className="row w-full justify-between">
             <h4>{pageTitle}</h4>

@@ -90,6 +90,7 @@ model Microcycle {
 model TrainingDay {
   id              String         @id @default(cuid())
   date            Int            @unique
+  sortOrder       String         @default("REST,ACTIVE_RECOVERY,WARMUP,CLIMBING,STRENGTH,CONDITIONING,COOLDOWN")
   routines        Routine[]
   microcycle      Microcycle     @relation(fields: [microcycleId], references: [id])
   microcycleId    String

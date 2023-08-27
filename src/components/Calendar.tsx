@@ -1,4 +1,4 @@
-import { isEmpty } from "@/utils/helpers";
+import { groupBy, isEmpty } from "@/utils/helpers";
 import { RoutineType } from "@prisma/client";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
@@ -31,7 +31,10 @@ const Routine = ({
         ? "bg-sky-500 text-white"
         : "bg-neutral text-white"
     }`}
-    style={{ height: `${height}%` }}
+    style={{
+      height: `${height !== -1 ? `${height}%` : "auto"}`,
+      flexGrow: height === -1 ? "1" : "0",
+    }}
   >
     {label}
   </div>
@@ -42,9 +45,12 @@ export const Calendar = ({
 }: {
   trainingDays: TrainingDayWithRelations[];
 }) => {
-  const calcHeight = (idx: number, numChildren: number) => {
-    return (idx / numChildren) * 100;
-  };
+  const calcHeight = (type: RoutineType) =>
+    type === RoutineType.WARMUP || type === RoutineType.COOLDOWN
+      ? 30
+      : type === RoutineType.REST || type === RoutineType.ACTIVE_RECOVERY
+      ? 100
+      : -1;
 
   return (
     <>
@@ -54,7 +60,7 @@ export const Calendar = ({
           <Link
             href={`/training/${t.date}`}
             key={idx}
-            className={`col h-3/4 w-32 shrink-0  text-lg odd:mx-4 first-of-type:ml-2 last-of-type:mr-2 lg:w-1/6`}
+            className={`col h-3/4 min-h-[28rem] w-32 shrink-0 text-lg odd:mx-4 first-of-type:ml-2 last-of-type:mr-2 lg:w-1/6`}
           >
             <p className="mb-3 text-xl font-bold">
               {dayjs.unix(t.date).format("dddd")}
@@ -62,14 +68,18 @@ export const Calendar = ({
             <motion.div className="col full gap-3" whileHover={{ scale: 1.05 }}>
               {t.routines &&
                 !isEmpty(t.routines) &&
-                t.routines.map((r, idx) => (
-                  <Routine
-                    key={idx}
-                    height={calcHeight(idx + 1, t.routines.length)}
-                    label={r.name}
-                    type={r.type}
-                  />
-                ))}
+                t.sortOrder
+                  .split(",")
+                  .map((c) =>
+                    groupBy(t.routines, (val) => val.type)[c]?.map((r, idx) => (
+                      <Routine
+                        key={idx}
+                        height={calcHeight(r.type)}
+                        label={r.name}
+                        type={r.type}
+                      />
+                    )),
+                  )}
             </motion.div>
           </Link>
         ))}
