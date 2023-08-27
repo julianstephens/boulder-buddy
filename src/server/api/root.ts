@@ -7,6 +7,7 @@ import { exerciseRouter } from "./routers/exercise";
 import { locationRouter } from "./routers/location";
 import { noteRouter } from "./routers/note";
 import { routineRouter } from "./routers/routine";
+import { recoveryLevelRouter } from "./routers/recoveryLevel";
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   micro: microRouter,
   trainingDay: trainingDayRouter,
   routine: routineRouter,
+  recoveryLevel: recoveryLevelRouter,
   exercise: exerciseRouter,
   climbLog: climbLogRouter,
   location: locationRouter,
