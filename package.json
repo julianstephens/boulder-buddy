@@ -32,7 +32,7 @@
     "react-select": "^5.7.4",
     "react-tailwindcss-datepicker": "^1.6.6",
     "superjson": "^1.13.1",
-    "zod": "^3.21.4",
+    "zod": "3.21.1",
     "zod-prisma-types": "^2.7.9",
     "zustand": "^4.4.1"
   },
@@ -49,12 +49,13 @@
     "daisyui": "^3.5.1",
     "eslint": "^8.40.0",
     "eslint-config-next": "^13.4.2",
+    "eslint-config-prettier": "^9.0.0",
     "postcss": "^8.4.27",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.8",
     "prisma": "^5.1.1",
     "tailwindcss": "^3.3.3",
-    "typescript": "^5.0.4"
+    "typescript": "^4.9.5"
   },
   "ct3aMetadata": {
     "initVersion": "7.18.0"
