@@ -1,0 +1,21 @@
+name: boulder-buddy
+services:
+  db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    networks:
+      - bb
+    ports:
+      - 5432:5432
+    volumes:
+      - bb-data:/var/lib/postgresql/data
+
+networks:
+  bb: 
+volumes:
+  bb-data:
+    external: true

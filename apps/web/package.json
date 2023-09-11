@@ -1,26 +1,41 @@
 {
   "name": "web",
-  "version": "1.0.0",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "next": "^13.4.19",
+    "dayjs": "^1.11.9",
+    "framer-motion": "^10.16.4",
     "react": "^18.2.0",
+    "react-datepicker": "^4.17.0",
     "react-dom": "^18.2.0",
-    "ui": "workspace:*"
+    "react-hook-form": "^7.46.1",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^4.11.0",
+    "react-router-dom": "^6.15.0",
+    "react-select": "^5.7.4",
+    "react-tailwindcss-datepicker": "^1.6.6",
+    "zustand": "^4.4.1"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^13.4.19",
-    "@types/node": "^17.0.12",
-    "@types/react": "^18.0.22",
-    "@types/react-dom": "^18.0.7",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.15",
+    "daisyui": "^3.7.3",
+    "db": "workspace:*",
     "eslint-config-custom": "workspace:*",
+    "postcss": "^8.4.29",
+    "tailwind-config": "workspace:*",
+    "tailwindcss": "^3.3.3",
     "tsconfig": "workspace:*",
-    "typescript": "^4.5.3"
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
   }
 }
