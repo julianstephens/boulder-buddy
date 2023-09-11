@@ -6,6 +6,12 @@ generator client {
   output   = "../node_modules/.prisma/prisma-client"
 }
 
+generator tsed {
+  provider           = "tsed-prisma"
+  output             = "../../../apps/api/src/generated/"
+  emitTranspiledCode = false
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL") // uses connection pooling
