@@ -8,8 +8,6 @@ import { AppModal } from "./AppModal";
 export const RoutineModal = () => {
   const form = useForm<Prisma.RoutineCreateInput>();
 
-  // const createMutation = api.routine.createRoutine.useMutation();
-
   const createRoutine = () => {};
 
   const closeModal = () => {
@@ -27,11 +25,9 @@ export const RoutineModal = () => {
     } satisfies Prisma.RoutineCreateInput;
 
     try {
-      await createMutation.mutateAsync(formData);
       toast.success("Routine created!");
     } catch (err) {
       console.error(err);
-      // toast.error((err as AppError).message);
     }
   };
 

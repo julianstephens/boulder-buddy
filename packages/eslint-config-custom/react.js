@@ -32,7 +32,6 @@ module.exports = {
     },
   },
   ignorePatterns: ["node_modules/", "dist/", ".eslintrc.js"],
-
   rules: {
     "import/no-default-export": "off",
   },
