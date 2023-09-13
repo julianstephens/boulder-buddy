@@ -1,1 +1,1 @@
-# boulder-buddy
+# Boulder Buddy
