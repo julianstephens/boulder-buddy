@@ -1,4 +1,0 @@
-
-> db@1.0.0 lint /home/julian/workspace/boulder-buddy/packages/db
-> eslint "src/**/*.ts"
-
