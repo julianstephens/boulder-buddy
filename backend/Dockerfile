@@ -1,29 +1,24 @@
-ARG PYTHON_VER=3.11
+FROM golang:1.21-alpine as base
 
-FROM python:${PYTHON_VER} AS base
+# Load build arg
+ARG APP_HOME
 
-WORKDIR /app
+# Create development stage and set app location in container to /app
+FROM base as development
+WORKDIR $APP_HOME
 
-ENV PYTHONUNBUFFERED=1
+# Add bash shell and gcc toolkit
+RUN apk add --no-cache --upgrade bash build-base
 
-# Install Poetry
-RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python && \
-    cd /usr/local/bin && \
-    ln -s /opt/poetry/bin/poetry && \
-    poetry config virtualenvs.create false
+# Install air
+RUN go install github.com/cosmtrek/air@latest
 
-COPY ./pyproject.toml ./poetry.lock* /app/
+# Copy go.mod and install go dependencies
+COPY go.mod ./
+RUN go mod download
 
-RUN poetry install --no-root
+# Copy source files
+COPY . .
 
-COPY . /app
-
-FROM python:3.11-slim
-
-WORKDIR /app
-
-COPY --from=base /app /app
-COPY --from=base /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=base /usr/local/bin /usr/local/bin
-
-CMD uvicorn --host 0.0.0.0 --port 8000 main:app
+# Build and run binary with live reloading
+CMD ["air"]

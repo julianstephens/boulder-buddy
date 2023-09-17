@@ -1,0 +1,283 @@
+basePath: /api/v1
+definitions:
+  handlers.Error:
+    properties:
+      code:
+        allOf:
+        - $ref: '#/definitions/utils.errorCode'
+        description: Machine-readable error code.
+      fields:
+        description: Some context of error
+        items:
+          type: string
+        type: array
+      message:
+        description: Human-readable message.
+        type: string
+      op:
+        description: Logical operation.
+        type: string
+      stack:
+        description: Wrapped error
+    type: object
+  handlers.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  handlers.Mesocycle:
+    properties:
+      description:
+        type: string
+      endDate:
+        type: integer
+      goal:
+        type: string
+      isActive:
+        type: boolean
+      numMicros:
+        type: integer
+      startDate:
+        type: integer
+    type: object
+  handlers.RegisterRequest:
+    description: New account information
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  handlers.Response:
+    properties:
+      message:
+        type: string
+    type: object
+  handlers.Session:
+    properties:
+      sessionId:
+        type: string
+    type: object
+  handlers.User:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    type: object
+  router.Response:
+    properties:
+      message:
+        type: string
+    type: object
+  utils.errorCode:
+    enum:
+    - conflict
+    - internal
+    - invalid
+    - not_found
+    - not_modified
+    - already_exists
+    - permission_denied
+    - unauthenticated
+    - cannot_decode
+    - cannot_encode
+    - cannot_parse
+    - undefined_behavior
+    - unsupported
+    - test_error_code
+    type: string
+    x-enum-varnames:
+    - ECONFLICT
+    - EINTERNAL
+    - EINVALID
+    - ENOTFOUND
+    - ENOTMODIFIED
+    - EALREADYEXISTS
+    - EPERMISSIONDENIED
+    - EUNAUTHENTICATED
+    - ECANNOTDECODE
+    - ECANNOTENCODE
+    - ECANNOTPARSE
+    - EBEHAVIOUR
+    - EUNSUPPORTED
+    - ETEST
+host: localhost:3500
+info:
+  contact: {}
+  title: Boulder Buddy API
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: retrieve server status
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/router.Response'
+      summary: Healthcheck
+  /auth/login:
+    post:
+      description: login a specific user
+      parameters:
+      - description: returning user info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.LoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Session'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Login
+      tags:
+      - Auth
+  /auth/logout:
+    delete:
+      description: logout a specific user
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Logout
+      tags:
+      - Auth
+  /auth/me:
+    get:
+      description: retrieve info for current authenticated user
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.User'
+      summary: Get Current User
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: create a new user
+      parameters:
+      - description: new account info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RegisterRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Session'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Register
+      tags:
+      - Auth
+  /mesos:
+    get:
+      description: get all mesocyles for current user
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handlers.Mesocycle'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Retrieve mesocyles
+      tags:
+      - Mesos
+    post:
+      description: create a new mesocycle
+      parameters:
+      - description: new mesocycle info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.Mesocycle'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Mesocycle'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Create a mesocyle
+      tags:
+      - Mesos
+  /users:
+    delete:
+      description: delete a specific user
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Delete User
+      tags:
+      - Users
+    put:
+      description: modify a user's password
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Change password
+      tags:
+      - Users
+schemes:
+- http
+swagger: "2.0"
