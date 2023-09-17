@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/golang-jwt/jwt"
 	"github.com/julianstephens/boulder-buddy/backend/handlers"
 	"github.com/julianstephens/boulder-buddy/backend/models"
@@ -46,7 +46,6 @@ func Authenticate(c *fiber.Ctx) error {
 
 	token, err := verifyTokenString(bearerSplit[1])
 	if err != nil {
-		log.Println("did not verify token", err)
 		return utils.AuthError()
 	}
 
@@ -61,6 +60,7 @@ func Authenticate(c *fiber.Ctx) error {
 		return utils.AuthError()
 	}
 	c.Locals("user", user)
+	log.Infof("request_id=%s cognito_user=%s ip=%s user_agent=%s", c.Context().Value("requestid"), userID, c.IP(), c.Context().UserAgent())
 	return c.Next()
 }
 

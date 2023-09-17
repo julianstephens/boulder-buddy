@@ -41,9 +41,9 @@ func main() {
 	}))
 	app.Use(requestid.New())
 	app.Use(logger.New(logger.Config{
-		Format:     "${pid} ${locals:requestid} ${status} - ${method} ${path}​\n",
-		TimeFormat: "02-Jan-2006",
-		TimeZone:   "America/New_York",
+		Format:     "${time} | ${pid} | ${locals:requestid} | ${status} | ${method} | ${path}​\n",
+		TimeFormat: "2006/01/02 15:04:05",
+		TimeZone:   "Local",
 	}))
 
 	database.ConnectDB()
