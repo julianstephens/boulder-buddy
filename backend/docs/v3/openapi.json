@@ -1,0 +1,199 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "contact" : { },
+    "title" : "Boulder Buddy API",
+    "version" : "1.0"
+  },
+  "servers" : [ {
+    "url" : "http://localhost:3500/api/v1"
+  } ],
+  "paths" : {
+    "/" : {
+      "get" : {
+        "description" : "retrieve server status",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/router.Response"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "500" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/router.Response"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "security" : [ ],
+        "summary" : "Healthcheck"
+      }
+    },
+    "/mesos" : {
+      "get" : {
+        "description" : "get all mesocyles for current user",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/handlers.Mesocycle"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "500" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/handlers.Error"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "security" : [ {
+          "Bearer" : [ ]
+        } ],
+        "summary" : "Retrieve mesocyles",
+        "tags" : [ "Mesos" ]
+      },
+      "post" : {
+        "description" : "create a new mesocycle",
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/handlers.Mesocycle"
+              }
+            }
+          },
+          "description" : "new mesocycle info",
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/handlers.Mesocycle"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "500" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/handlers.Error"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "security" : [ {
+          "Bearer" : [ ]
+        } ],
+        "summary" : "Create a mesocyle",
+        "tags" : [ "Mesos" ],
+        "x-codegen-request-body-name" : "data"
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "handlers.Error" : {
+        "properties" : {
+          "code" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/utils.errorCode"
+            } ],
+            "description" : "Machine-readable error code.",
+            "type" : "object"
+          },
+          "fields" : {
+            "description" : "Some context of error",
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          },
+          "message" : {
+            "description" : "Human-readable message.",
+            "type" : "string"
+          },
+          "op" : {
+            "description" : "Logical operation.",
+            "type" : "string"
+          },
+          "stack" : {
+            "description" : "Wrapped error",
+            "type" : "object"
+          }
+        },
+        "type" : "object"
+      },
+      "handlers.Mesocycle" : {
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "endDate" : {
+            "type" : "integer"
+          },
+          "goal" : {
+            "type" : "string"
+          },
+          "isActive" : {
+            "type" : "boolean"
+          },
+          "numMicros" : {
+            "type" : "integer"
+          },
+          "startDate" : {
+            "type" : "integer"
+          }
+        },
+        "type" : "object"
+      },
+      "router.Response" : {
+        "properties" : {
+          "message" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "utils.errorCode" : {
+        "enum" : [ "conflict", "internal", "invalid", "not_found", "not_modified", "already_exists", "permission_denied", "unauthenticated", "cannot_decode", "cannot_encode", "cannot_parse", "undefined_behavior", "unsupported", "test_error_code" ],
+        "type" : "string",
+        "x-enum-varnames" : [ "ECONFLICT", "EINTERNAL", "EINVALID", "ENOTFOUND", "ENOTMODIFIED", "EALREADYEXISTS", "EPERMISSIONDENIED", "EUNAUTHENTICATED", "ECANNOTDECODE", "ECANNOTENCODE", "ECANNOTPARSE", "EBEHAVIOUR", "EUNSUPPORTED", "ETEST" ]
+      }
+    },
+    "securitySchemes" : {
+      "Bearer" : {
+        "description" : "Type \"Bearer\" followed by a space and JWT token.",
+        "in" : "header",
+        "name" : "Authorization",
+        "type" : "apiKey"
+      }
+    }
+  },
+  "x-original-swagger-version" : "2.0"
+}
