@@ -11,6 +11,7 @@ import (
 )
 
 type Mesocycle = models.Mesocycle
+type User = models.User
 type Error = utils.Error
 
 // Retrieve mesocyles
@@ -63,6 +64,7 @@ func CreateMeso(c *fiber.Ctx) error {
 		UserRefer:   user.ID,
 		ID:          guuid.New(),
 	}
+
 	err := db.Create(&new).Error
 	if err != nil {
 		return utils.NewError(utils.EINTERNAL, op, "Unable to create mesocyle", []string{}, err)

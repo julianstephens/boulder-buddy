@@ -20,13 +20,6 @@ definitions:
       stack:
         description: Wrapped error
     type: object
-  handlers.LoginRequest:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    type: object
   handlers.Mesocycle:
     properties:
       description:
@@ -41,33 +34,6 @@ definitions:
         type: integer
       startDate:
         type: integer
-    type: object
-  handlers.RegisterRequest:
-    description: New account information
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  handlers.Response:
-    properties:
-      message:
-        type: string
-    type: object
-  handlers.Session:
-    properties:
-      sessionId:
-        type: string
-    type: object
-  handlers.User:
-    properties:
-      email:
-        type: string
-      username:
-        type: string
     type: object
   router.Response:
     properties:
@@ -121,92 +87,6 @@ paths:
           schema:
             $ref: '#/definitions/router.Response'
       summary: Healthcheck
-  /auth/login:
-    post:
-      description: login a specific user
-      parameters:
-      - description: returning user info
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.LoginRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Session'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: Login
-      tags:
-      - Auth
-  /auth/logout:
-    delete:
-      description: logout a specific user
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: Logout
-      tags:
-      - Auth
-  /auth/me:
-    get:
-      description: retrieve info for current authenticated user
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.User'
-      summary: Get Current User
-      tags:
-      - Auth
-  /auth/register:
-    post:
-      consumes:
-      - application/json
-      description: create a new user
-      parameters:
-      - description: new account info
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/handlers.RegisterRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.Session'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: Register
-      tags:
-      - Auth
   /mesos:
     get:
       description: get all mesocyles for current user
@@ -245,39 +125,6 @@ paths:
       summary: Create a mesocyle
       tags:
       - Mesos
-  /users:
-    delete:
-      description: delete a specific user
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: Delete User
-      tags:
-      - Users
-    put:
-      description: modify a user's password
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/handlers.Response'
-      summary: Change password
-      tags:
-      - Users
 schemes:
 - http
 swagger: "2.0"

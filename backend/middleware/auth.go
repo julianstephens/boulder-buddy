@@ -10,21 +10,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/golang-jwt/jwt"
-	"github.com/julianstephens/boulder-buddy/backend/handlers"
+	guuid "github.com/google/uuid"
+	"github.com/julianstephens/boulder-buddy/backend/database"
 	"github.com/julianstephens/boulder-buddy/backend/models"
 	"github.com/julianstephens/boulder-buddy/backend/utils"
+	"gorm.io/gorm"
 
 	"github.com/lestrrat-go/jwx/jwk"
 )
 
-type Response models.Response
+type User = models.User
 
 type CognitoUser struct {
-	Sub      string    `json:"sub"`
-	Email    string    `json:"email"`
-	Verified string    `json:"email_verified"`
-	Created  time.Time `json:"created"`
-	Modified time.Time `json:"last_modified"`
+	Sub      string `json:"sub"`
+	Email    string `json:"email"`
+	Verified string `json:"email_verified"`
+	Username string `json:"username"`
 }
 
 type CognitoTokens struct {
@@ -38,6 +39,7 @@ type CognitoTokens struct {
 
 // Middleware that checks incoming requests for valid JWTs
 func Authenticate(c *fiber.Ctx) error {
+	db := database.DB
 	bearer := c.GetReqHeaders()["Authorization"]
 	bearerSplit := strings.Split(bearer, " ")
 	if len(bearerSplit) != 2 {
@@ -55,11 +57,26 @@ func Authenticate(c *fiber.Ctx) error {
 	if err != nil {
 		return utils.AuthError()
 	}
-	user, err := handlers.GetUser(cognitoUser.Email)
-	if err != nil {
+
+	var user User
+	err = db.First(&user, User{Email: user.Email}).Error
+	if err == gorm.ErrRecordNotFound {
+		new := User{
+			ID:        guuid.New(),
+			CognitoID: userID,
+			Email:     cognitoUser.Email,
+		}
+		err = db.Create(&new).Error
+		if err != nil {
+			return utils.AuthError()
+		}
+		c.Locals("user", new)
+	} else if err != nil {
 		return utils.AuthError()
+	} else {
+		c.Locals("user", user)
 	}
-	c.Locals("user", user)
+
 	log.Infof("request_id=%s cognito_user=%s ip=%s user_agent=%s", c.Context().Value("requestid"), userID, c.IP(), c.Context().UserAgent())
 	return c.Next()
 }
@@ -134,26 +151,19 @@ func getUserInfo(userId string, token string) (*CognitoUser, error) {
 	domain := utils.Getenv("AWS_COGNITO_DOMAIN", "")
 	uri := fmt.Sprintf("https://%s/oauth2/userInfo", domain)
 
-	agent := fiber.AcquireAgent()
-	agent.Request().Header.SetMethod("GET")
+	agent := fiber.Get(uri)
 	agent.Request().Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
-	agent.Request().SetRequestURI(uri)
-
-	err := agent.Parse()
-	if err != nil {
-		return nil, err
-	}
 
 	_, body, errs := agent.Bytes()
 	if len(errs) > 0 {
 		return nil, fmt.Errorf("unable to process user info")
 	}
 
-	var user CognitoUser
-	err = json.Unmarshal(body, &user)
+	var cogUser CognitoUser
+	err := json.Unmarshal(body, &cogUser)
 	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	return &cogUser, nil
 }

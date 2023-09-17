@@ -28,25 +28,10 @@ func Initalize(router *fiber.App) {
 	{
 		v1.Get("/", Healthcheck)
 
-		auth := v1.Group("/auth")
+		mesos := v1.Group("/mesos", middleware.Authenticate)
 		{
-			auth.Post("/register", handlers.Register)
-			auth.Post("/login", handlers.Login)
-			auth.Delete("/logout", handlers.Logout)
-			auth.Post("/me", middleware.Authenticate, handlers.GetUserInfo)
-		}
-
-		users := v1.Group("/users")
-		{
-			users.Delete("/", middleware.Authenticate, handlers.DeleteUser)
-			users.Put("/", middleware.Authenticate, handlers.ChangePassword)
-		}
-
-		mesos := v1.Group("/mesos")
-		{
-			mesos.Get("/", middleware.Authenticate, handlers.GetMesos)
-			mesos.Post("/", middleware.Authenticate, handlers.CreateMeso)
-
+			mesos.Get("/", handlers.GetMesos)
+			mesos.Post("/", handlers.CreateMeso)
 		}
 	}
 
