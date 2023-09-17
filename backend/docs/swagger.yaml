@@ -86,6 +86,11 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/router.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/router.Response'
+      security: []
       summary: Healthcheck
   /mesos:
     get:
@@ -101,6 +106,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Error'
+      security:
+      - Bearer: []
       summary: Retrieve mesocyles
       tags:
       - Mesos
@@ -122,9 +129,17 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/handlers.Error'
+      security:
+      - Bearer: []
       summary: Create a mesocyle
       tags:
       - Mesos
 schemes:
 - http
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -1,6 +1,6 @@
 import "@aws-amplify/ui-react/styles.css";
 import { Amplify, Auth, Hub } from "aws-amplify";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "./App.css";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
@@ -22,7 +22,7 @@ Amplify.configure({
   },
 });
 
-const listener = (data: any) => {
+const listener = (data: { payload: { event: string } }) => {
   switch (data?.payload?.event) {
     case "signIn":
       console.log("user signed in");
@@ -38,7 +38,6 @@ const listener = (data: any) => {
 Hub.listen("auth", listener);
 
 function App() {
-  const [currentUser] = useState();
   const getData = async () => {
     const data = await fetch(`/api/mesos`, {
       headers: {
@@ -74,7 +73,7 @@ function App() {
       },
       (err) => {
         console.error("ERR", err);
-      }
+      },
     );
   }, []);
 
@@ -89,8 +88,9 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
-      <p>{(currentUser as any)?.email}</p>
-      <button onClick={authClick}>{isAuthed() ? "Sign Out" : "Sign In"}</button>
+      <button onClick={() => authClick}>
+        {isAuthed() ? "Sign Out" : "Sign In"}
+      </button>
     </>
   );
 }

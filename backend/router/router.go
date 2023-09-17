@@ -15,6 +15,8 @@ type Response models.Response
 // @Summary Healthcheck
 // @Description retrieve server status
 // @Success 200 {object} Response
+// @Failure 500 {object} Response
+// @Security
 // @Router / [get]
 func Healthcheck(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(Response{Message: "API Healthy!"})

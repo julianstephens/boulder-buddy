@@ -21,6 +21,10 @@ import (
 // @host localhost:3500
 // @BasePath /api/v1
 // @schemes http
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
 	err := godotenv.Load()
 	if err != nil {

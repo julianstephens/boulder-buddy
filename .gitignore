@@ -14,6 +14,7 @@ tmp/
 
 # Node.js dependencies
 **/node_modules/
+**/.pnpm-store/
 
 # Node builds
 **/dist/

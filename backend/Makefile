@@ -1,7 +1,7 @@
 .PHONY: swag up
 
 swag: 
-	swag init -g app.go
+	watch -n 10 swag init -g app.go
 	
 up:
 	docker compose up -d  --build backend

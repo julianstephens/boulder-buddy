@@ -20,6 +20,7 @@ type Error = utils.Error
 // @Tags Mesos
 // @Success 200 {object} []Mesocycle
 // @Failure 500 {object} Error
+// @Security Bearer
 // @Router /mesos [get]
 func GetMesos(c *fiber.Ctx) error {
 	op := "mesos.GetMesos"
@@ -43,6 +44,7 @@ func GetMesos(c *fiber.Ctx) error {
 // @Param data body Mesocycle true "new mesocycle info"
 // @Success 200 {object} Mesocycle
 // @Failure 500 {object} Error
+// @Security Bearer
 // @Router /mesos [post]
 func CreateMeso(c *fiber.Ctx) error {
 	op := "mesos.CreateMesos"

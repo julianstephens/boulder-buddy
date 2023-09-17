@@ -17,11 +17,18 @@ const docTemplate = `{
     "paths": {
         "/": {
             "get": {
+                "security": [],
                 "description": "retrieve server status",
                 "summary": "Healthcheck",
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/router.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/router.Response"
                         }
@@ -31,6 +38,11 @@ const docTemplate = `{
         },
         "/mesos": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "get all mesocyles for current user",
                 "tags": [
                     "Mesos"
@@ -55,6 +67,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "create a new mesocycle",
                 "tags": [
                     "Mesos"
@@ -185,6 +202,14 @@ const docTemplate = `{
                 "EUNSUPPORTED",
                 "ETEST"
             ]
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
