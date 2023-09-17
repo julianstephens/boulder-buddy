@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typegen": "openapi-typescript ../backend/docs/v3/openapi.json -o ./src/types/openapi.d.ts",
     "preview": "vite preview"
   },
   "dependencies": {

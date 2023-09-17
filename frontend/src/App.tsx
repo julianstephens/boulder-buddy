@@ -3,6 +3,7 @@ import { Amplify, Auth, Hub } from "aws-amplify";
 import { useEffect } from "react";
 import "./App.css";
 import reactLogo from "./assets/react.svg";
+import { components } from "./types/openapi";
 import viteLogo from "/vite.svg";
 
 Amplify.configure({
@@ -37,6 +38,8 @@ const listener = (data: { payload: { event: string } }) => {
 
 Hub.listen("auth", listener);
 
+type Meso = components["schemas"]["handlers.Mesocycle"];
+
 function App() {
   const getData = async () => {
     const data = await fetch(`/api/mesos`, {
@@ -46,7 +49,7 @@ function App() {
           .getJwtToken()}`,
       },
     });
-    const res = await data.json();
+    const res: Meso[] = await data.json();
 
     return res;
   };
