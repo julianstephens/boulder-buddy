@@ -1,21 +1,34 @@
-FROM node:alpine as build
+FROM node:alpine as base
 
+ARG APP_HOME
 RUN npm i -g pnpm
 
-WORKDIR /app
+FROM base as installer
 
-COPY package.json pnpm-lock.yaml /app/
+WORKDIR $APP_HOME
 
-RUN pnpm install
+COPY package.json pnpm-lock.yaml ./
 
-COPY . /app/
+RUN pnpm i
 
-# RUN CI=1 pnpm test
+FROM installer as development
+
+WORKDIR $APP_HOME
+
+COPY . .
+
+COPY --from=installer $APP_HOME/node_modules ./
+
+CMD ["pnpm", "dev", "--host"]
+
+FROM installer as builder
+
+ARG APP_HOME
+WORKDIR $APP_HOME
+
+COPY . .
+COPY --from=installer node_modules ./
 
 RUN pnpm build
 
-FROM nginx:latest
-
-COPY --from=build /app/dist /usr/share/nginx/html
-
-COPY --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
+CMD ["pnpm", "preview"]

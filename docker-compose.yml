@@ -1,37 +1,47 @@
-version: "3.9"
+name: boulder-buddy
 
 services:
-  postgres:
-    image: postgres:12
+  database:
+    container_name: postgres
+    image: postgres:15-alpine
     restart: always
-    env_file:
-      - .env
-    healthcheck:
-      test: pg_isready -U postgres
-      interval: 3s
-      timeout: 2s
-      retries: 3
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      # seeding
+      # - ./backend/database/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # named volume
+      - bb-pg-data:/var/lib/postgresql/data
 
   backend:
+    container_name: backend
+    hostname: api
     build:
-      context: backend
+      context: ./backend
+      target: ${APP_ENV}
+      args:
+        APP_HOME: ${APP_HOME}
     ports:
-      - "8000:8000"
-    env_file: .env
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - 3500:8000
+    volumes:
+      - ./backend:${APP_HOME}
+    links:
+      - database
 
   frontend:
+    container_name: frontend
     build:
-      context: frontend
-    ports:
-      - "3000:80"
+      context: ./frontend
+      target: ${APP_ENV}
+      args:
+        APP_HOME: ${APP_HOME}
     volumes:
-      - ./frontend:/app:delegated
-    environment:
-      - NODE_ENV=production
+      - ./frontend:${APP_HOME}
+    ports:
+      - 5173:5173
 
 volumes:
-  app-db-data:
-  root-home:
+  bb-pg-data:
+    external: true
