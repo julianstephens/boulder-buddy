@@ -66,6 +66,12 @@ export interface paths {
             "*/*": components["schemas"]["handlers.Mesocycle"];
           };
         };
+        /** @description Bad Request */
+        400: {
+          content: {
+            "*/*": components["schemas"]["handlers.Error"];
+          };
+        };
         /** @description Internal Server Error */
         500: {
           content: {
@@ -95,11 +101,11 @@ export interface components {
     };
     "handlers.Mesocycle": {
       description?: string;
-      endDate?: number;
-      goal?: string;
-      isActive?: boolean;
-      numMicros?: number;
-      startDate?: number;
+      endDate: number;
+      goal: string;
+      isActive: boolean;
+      maxMicros: number;
+      startDate: number;
     };
     "router.Response": {
       message?: string;

@@ -1,69 +1,104 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer base {
+  /* html, body {
+    @apply min-h-full;
   }
-  a:hover {
-    color: #747bff;
+
+  html {
+    @apply overflow-hidden;
+  } */
+
+  /* body {
+    @apply ;
+  } */
+
+  html, body {
+    @apply min-h-screen w-screen m-0;
   }
-  button {
-    background-color: #f9f9f9;
+
+  #__next {
+    @apply flex flex-col grow-0 absolute h-full w-full;
   }
+
+  h1,
+  .h1 {
+    @apply text-3xl lg:text-4xl;
+  }
+
+  h2,
+  .h2 {
+    @apply text-2xl lg:text-3xl;
+  }
+
+  h3,
+  .h3 {
+    @apply text-xl lg:text-2xl;
+  }
+
+  h4,
+  .h4 {
+    @apply text-lg lg:text-xl;
+  }
+
+  h5,
+  .h5 {
+    @apply text-base font-bold lg:text-lg lg:font-normal;
+  }
+}
+
+@layer components {
+  .row {
+    @apply flex items-center;
+  }
+
+  .col {
+    @apply row flex-col;
+  }
+
+  .btn {
+    @apply rounded-full border-none bg-base-200/90 py-3 font-semibold text-white no-underline transition hover:bg-base-300/80;
+  }
+
+  .btn-card {
+    @apply bordered min-h-16 grid w-full grid-cols-3 items-center rounded-2xl border transition hover:bg-base-content/50 hover:text-white hover:shadow-md;
+  }
+
+  .btn.success, .btn-card.success {
+    @apply border-success/50 hover:bg-success;
+  }
+  
+  label {
+    @apply label col items-start w-full;
+  }
+
+  input {
+    @apply input input-bordered mt-2;
+  }
+  
+  textarea {
+    @apply textarea textarea-bordered mt-2;
+  }
+
+  select {
+    @apply select select-bordered mt-2;
+  }
+
+  .required {
+    @apply after:text-red-500;
+  }
+
+  .full {
+    @apply h-full w-full;
+  }
+
+  .centered {
+    @apply justify-center items-center;
+  }
+}
+
+.required:after {
+  content:" *";
 }

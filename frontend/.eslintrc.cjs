@@ -28,5 +28,6 @@ module.exports = {
     "react/jsx-no-target-blank": "off",
     "@typescript-eslint/no-unsafe-assignment": "warn",
     "@typescript-eslint/no-unsafe-return": "warn",
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"]
   },
 };
