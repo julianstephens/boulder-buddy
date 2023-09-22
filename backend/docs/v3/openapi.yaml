@@ -63,6 +63,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/handlers.Mesocycle'
           description: OK
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/handlers.Error'
+          description: Bad Request
         "500":
           content:
             '*/*':
@@ -103,10 +109,10 @@ components:
       example:
         goal: goal
         endDate: 0
-        numMicros: 6
         description: description
         isActive: true
         startDate: 1
+        maxMicros: 6
       properties:
         description:
           type: string
@@ -116,10 +122,16 @@ components:
           type: string
         isActive:
           type: boolean
-        numMicros:
+        maxMicros:
           type: integer
         startDate:
           type: integer
+      required:
+      - endDate
+      - goal
+      - isActive
+      - maxMicros
+      - startDate
       type: object
     router.Response:
       example:

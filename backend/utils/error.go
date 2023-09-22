@@ -2,49 +2,35 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"runtime"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
-func CallerFunctionName() string {
-	// Skip callerFunctionName and the function to get the caller of
-	return getFrame(2).Function
-}
-
-func CurrentFunctionName() string {
-	// Skip CurrentFunctionName
-	return getFrame(1).Function
-}
-
-func getFrame(skipFrames int) runtime.Frame {
-	// We need the frame at index skipFrames+2, since we never want runtime.Callers and getFrame
-	targetFrameIndex := skipFrames + 2
-
-	// Set size to targetFrameIndex+2 to ensure we have room for one more caller than we need
-	programCounters := make([]uintptr, targetFrameIndex+2)
-	n := runtime.Callers(0, programCounters)
-
-	frame := runtime.Frame{Function: "unknown"}
-	if n > 0 {
-		frames := runtime.CallersFrames(programCounters[:n])
-		for more, frameIndex := true, 0; more && frameIndex <= targetFrameIndex; frameIndex++ {
-			var frameCandidate runtime.Frame
-			frameCandidate, more = frames.Next()
-			if frameIndex == targetFrameIndex {
-				frame = frameCandidate
-			}
-		}
-	}
-
-	return frame
-}
-
 type errorCode string
 
-func (code errorCode) String() string {
-	return string(code)
+// Error defines a standard application error.
+type Error struct {
+	// Wrapped error
+	Err error `json:"stack"`
+	// Some context of error
+	Fields []string `json:"fields"`
+	// Machine-readable error code.
+	Code errorCode `json:"code"`
+	// Human-readable message.
+	Message string `json:"message"`
+	// Logical operation.
+	Op string `json:"op"`
+}
+
+// ValidationError defines an invalid input error.
+type ValidationError struct {
+	Path    string `json:"path"`
+	Tag     string `json:"tag"`
+	Message string `json:"message"`
 }
 
 // Application error codes.
@@ -113,18 +99,41 @@ var codeToHTTPStatusMap = map[errorCode]int{
 	DefaultErrorMessage: fiber.StatusInternalServerError,
 }
 
-// Error defines a standard application error.
-type Error struct {
-	// Wrapped error
-	Err error `json:"stack"`
-	// Some context of error
-	Fields []string `json:"fields"`
-	// Machine-readable error code.
-	Code errorCode `json:"code"`
-	// Human-readable message.
-	Message string `json:"message"`
-	// Logical operation.
-	Op string `json:"op"`
+func CallerFunctionName() string {
+	// Skip callerFunctionName and the function to get the caller of
+	return getFrame(2).Function
+}
+
+func CurrentFunctionName() string {
+	// Skip CurrentFunctionName
+	return getFrame(1).Function
+}
+
+func getFrame(skipFrames int) runtime.Frame {
+	// We need the frame at index skipFrames+2, since we never want runtime.Callers and getFrame
+	targetFrameIndex := skipFrames + 2
+
+	// Set size to targetFrameIndex+2 to ensure we have room for one more caller than we need
+	programCounters := make([]uintptr, targetFrameIndex+2)
+	n := runtime.Callers(0, programCounters)
+
+	frame := runtime.Frame{Function: "unknown"}
+	if n > 0 {
+		frames := runtime.CallersFrames(programCounters[:n])
+		for more, frameIndex := true, 0; more && frameIndex <= targetFrameIndex; frameIndex++ {
+			var frameCandidate runtime.Frame
+			frameCandidate, more = frames.Next()
+			if frameIndex == targetFrameIndex {
+				frame = frameCandidate
+			}
+		}
+	}
+
+	return frame
+}
+
+func (code errorCode) String() string {
+	return string(code)
 }
 
 func (e *Error) Unwrap() error { return e.Err }
@@ -157,6 +166,29 @@ func (e *Error) Error() string {
 		}
 		buf.WriteString(e.Message)
 	}
+
+	return buf.String()
+}
+
+// Error returns the string representation of the error message.
+func (e *ValidationError) Error() string {
+	var buf strings.Builder
+
+	if e.Path != "" {
+		buf.WriteString(e.Path)
+		buf.WriteString(": ")
+	}
+
+	if e.Tag != "" {
+		buf.WriteRune('<')
+		buf.WriteString(string(e.Tag))
+		buf.WriteRune('>')
+	}
+	if e.Tag != "" && e.Message != "" {
+		// add a space
+		buf.WriteRune(' ')
+	}
+	buf.WriteString(e.Message)
 
 	return buf.String()
 }
@@ -321,11 +353,21 @@ func NewError(code errorCode, op string, message string, fields []string, err er
 	}
 }
 
+func NewValidationError(op string, fields []string, errs []ValidationError) map[string]any {
+	return map[string]any{
+		"code":    EINVALID,
+		"op":      op,
+		"message": "Invalid input",
+		"fields":  fields,
+		"stack":   errs,
+	}
+}
+
 func AuthError() error {
 	return NewError(EPERMISSIONDENIED, "", "Not authorized", []string{}, nil)
 }
 
-func ErrCodeToHTTPStatus(err error) int {
+func ErrToHTTPStatus(err error) int {
 	code := ErrorCode(err)
 	if v, ok := codeToHTTPStatusMap[code]; ok {
 		return v
@@ -335,10 +377,24 @@ func ErrCodeToHTTPStatus(err error) int {
 	return fiber.StatusInternalServerError
 }
 
+func ErrCodeToHTTPStatus(code errorCode) int {
+	return ErrToHTTPStatus(&Error{Code: code})
+}
+
+func GenerateErrorMessage(err validator.FieldError) string {
+	switch err.Tag() {
+	case "required":
+		return fmt.Sprintf("%s is required", strings.Join(RegSplit(err.Field(), "[A-Z][^A-Z]*"), " "))
+	default:
+		return err.Error()
+	}
+}
+
 var (
 	_ error = &Error{}
 	_ interface {
 		Is(error) bool
 		Unwrap() error
 	} = &Error{}
+	_ error = &ValidationError{}
 )

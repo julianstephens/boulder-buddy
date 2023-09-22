@@ -30,10 +30,16 @@ definitions:
         type: string
       isActive:
         type: boolean
-      numMicros:
+      maxMicros:
         type: integer
       startDate:
         type: integer
+    required:
+    - endDate
+    - goal
+    - isActive
+    - maxMicros
+    - startDate
     type: object
   router.Response:
     properties:
@@ -125,6 +131,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/handlers.Mesocycle'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
         "500":
           description: Internal Server Error
           schema:

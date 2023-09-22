@@ -95,6 +95,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/handlers.Mesocycle"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Error"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -139,6 +145,13 @@ const docTemplate = `{
         },
         "handlers.Mesocycle": {
             "type": "object",
+            "required": [
+                "endDate",
+                "goal",
+                "isActive",
+                "maxMicros",
+                "startDate"
+            ],
             "properties": {
                 "description": {
                     "type": "string"
@@ -152,7 +165,7 @@ const docTemplate = `{
                 "isActive": {
                     "type": "boolean"
                 },
-                "numMicros": {
+                "maxMicros": {
                     "type": "integer"
                 },
                 "startDate": {

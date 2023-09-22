@@ -3,7 +3,9 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	guuid "github.com/google/uuid"
 	"github.com/julianstephens/boulder-buddy/backend/database"
 	"github.com/julianstephens/boulder-buddy/backend/models"
@@ -13,6 +15,7 @@ import (
 type Mesocycle = models.Mesocycle
 type User = models.User
 type Error = utils.Error
+type VError = utils.ValidationError
 
 // Retrieve mesocyles
 // @Summary Retrieve mesocyles
@@ -43,6 +46,7 @@ func GetMesos(c *fiber.Ctx) error {
 // @Tags Mesos
 // @Param data body Mesocycle true "new mesocycle info"
 // @Success 200 {object} Mesocycle
+// @Failure 400 {object} Error
 // @Failure 500 {object} Error
 // @Security Bearer
 // @Router /mesos [post]
@@ -53,6 +57,7 @@ func CreateMeso(c *fiber.Ctx) error {
 
 	json := new(Mesocycle)
 	if err := c.BodyParser(json); err != nil {
+		log.Debug("parse err", err)
 		return utils.NewError(utils.ECANNOTPARSE, op, "Cannot parse body", []string{"body"}, nil)
 	}
 
@@ -61,13 +66,21 @@ func CreateMeso(c *fiber.Ctx) error {
 		Description: json.Description,
 		StartDate:   json.StartDate,
 		EndDate:     json.EndDate,
-		NumMicros:   json.NumMicros,
+		MaxMicros:   json.MaxMicros,
 		IsActive:    json.IsActive,
 		UserRefer:   user.ID,
 		ID:          guuid.New(),
 	}
 
-	err := db.Create(&new).Error
+	validate := utils.InitValidator()
+	err := validate.Struct(new)
+	if err != nil {
+		validationErrors := err.(validator.ValidationErrors)
+		fields, errs := utils.ExtractErrorData(validationErrors)
+		return c.Status(utils.ErrCodeToHTTPStatus(utils.EINVALID)).JSON(utils.NewValidationError(op, fields, errs))
+	}
+
+	err = db.Create(&new).Error
 	if err != nil {
 		return utils.NewError(utils.EINTERNAL, op, "Unable to create mesocyle", []string{}, err)
 	}

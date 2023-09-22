@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/joho/godotenv"
 	"github.com/julianstephens/boulder-buddy/backend/database"
 	_ "github.com/julianstephens/boulder-buddy/backend/docs"
@@ -26,14 +28,18 @@ import (
 // @name Authorization
 // @description Type "Bearer" followed by a space and JWT token.
 func main() {
+	validate := utils.InitValidator()
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Unable to load .env file")
 	}
 
+	cfg, err := utils.Parse(validate)
+
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			code := utils.ErrCodeToHTTPStatus(err)
+			code := utils.ErrToHTTPStatus(err)
 			log.Println(code)
 			return c.Status(code).JSON(err)
 		},
@@ -52,9 +58,7 @@ func main() {
 
 	database.ConnectDB()
 
-	port := utils.Getenv("API_PORT", "8000")
-
 	app.Get("/docs/*", swagger.HandlerDefault)
 	router.Initalize(app)
-	log.Fatal(app.Listen(":" + utils.Getenv("PORT", port)))
+	log.Fatal(app.Listen(":" + strconv.FormatInt(int64(cfg.AppPort), 10)))
 }
